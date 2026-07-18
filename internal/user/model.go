@@ -1,0 +1,12 @@
+package user
+
+import "time"
+
+type User struct {
+	ID        int64     `db:"id"`
+	Username  string    `db:"username"`
+	Email     string    `db:"email"`
+	GitHubID  string    `db:"github_id"`
+	Bio       string    `db:"bio"`
+	CreatedAt time.Time `db:"created_at"`
+}
