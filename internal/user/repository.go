@@ -41,16 +41,25 @@ func (r *Repository) GetByID(ctx context.Context, id int64) (*User, error) {
 	return &u, nil
 }
 
-func (r *Repository) Update(ctx context.Context, u *User) error {
+func (r *Repository) Update(ctx context.Context, u *User, id int64) error {
 	tag, err := r.db.Exec(ctx,
 		`UPDATE users SET username=$1, bio=$2 WHERE id=$3`,
-		u.Username, u.Bio, u.ID,
+		u.Username, u.Bio, id,
 	)
 	if err != nil {
 		return err
 	}
 	if tag.RowsAffected() == 0 {
 		return ErrNotFound
+	}
+	return nil
+}
+
+func (r *Repository) Delete(ctx context.Context, id int64) error {
+	err := r.db.QueryRow(ctx, `DELETE FROM users WHERE id=$1`, id)
+
+	if err != nil {
+		return pgx.ErrNoRows
 	}
 	return nil
 }
