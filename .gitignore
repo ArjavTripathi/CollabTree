@@ -1,0 +1,37 @@
+# --- Go Binaries and Build Artifacts ---
+bin/
+dist/
+*.exe
+*.exe~
+*.dll
+*.so
+*.dylib
+*.test
+*.out
+*.coverprofile
+profile.cov
+
+# --- Go Workspace & Vendor ---
+# Keep go.work out of shared repos if it is machine-specific
+# go.work
+# go.work.sum
+# vendor/
+
+# --- Environment Variables ---
+.env
+.env.*
+!.env.example
+
+# --- JetBrains / GoLand IDE Config ---
+.idea/
+# If you prefer to share run configurations and team dictionaries,
+# uncomment the broad .idea/ ignore above and use the granular approach below:
+# .idea/workspace.xml
+# .idea/usage.statistics.xml
+# .idea/dictionaries/
+# .idea/shelf/
+# .idea/VCS.xml
+
+# --- OS Specific ---
+.DS_Store
+Thumbs.db
