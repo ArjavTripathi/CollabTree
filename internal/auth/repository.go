@@ -27,3 +27,8 @@ func (r *SessionRepository) Get(ctx context.Context, id string) (Session, error)
 	).Scan(&s.ID, &s.UserID, &s.ExpiresAt)
 	return s, err
 }
+
+func (r *SessionRepository) Delete(ctx context.Context, id string) error {
+	_, err := r.db.Exec(ctx, "DELETE FROM sessions WHERE id = $1", id)
+	return err
+}
