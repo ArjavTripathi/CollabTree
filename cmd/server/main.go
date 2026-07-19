@@ -30,10 +30,12 @@ func main() {
 	authSessionStore := auth.NewSessionRepository(pool)
 	authorizeRequest := middleware.NewAuthMiddleware(authSessionStore)
 
+	CORSrequest := middleware.CORS(os.Getenv("FRONTEND_ORIGIN"))
+
 	mux := http.NewServeMux()
 	userHandler.RegisterRoutes(mux, authorizeRequest)
 	authHandler.RegisterRoutes(mux)
-	handler := middleware.Recover(middleware.Logging(middleware.RequestId(mux)))
+	handler := middleware.Recover(middleware.Logging(middleware.RequestId(CORSrequest(mux))))
 
 	log.Fatal(http.ListenAndServe(":8080", handler))
 
