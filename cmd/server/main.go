@@ -27,10 +27,13 @@ func main() {
 	authSvc := auth.NewService(os.Getenv("CLIENT_ID"), os.Getenv("CLIENT_SECRET"), authRepo, userService)
 	authHandler := auth.NewHandler(authSvc)
 
+	authSessionStore := auth.NewSessionRepository(pool)
+	authorizeRequest := middleware.NewAuthMiddleware(authSessionStore)
+
 	mux := http.NewServeMux()
-	userHandler.RegisterRoutes(mux)
+	userHandler.RegisterRoutes(mux, authorizeRequest)
 	authHandler.RegisterRoutes(mux)
-	handler := middleware.Recover(middleware.Logging(mux))
+	handler := middleware.Recover(middleware.Logging(middleware.RequestId(mux)))
 
 	log.Fatal(http.ListenAndServe(":8080", handler))
 
