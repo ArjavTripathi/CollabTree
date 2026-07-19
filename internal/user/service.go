@@ -7,10 +7,15 @@ type globalRepository interface {
 	Create(ctx context.Context, u *User) (int64, error)
 	Update(ctx context.Context, u *User, id int64) error
 	Delete(ctx context.Context, id int64) error
+	FindOrCreateGithubID(ctx context.Context, id string, login string, email string) (int64, error)
 }
 
 type Service struct {
 	repo globalRepository
+}
+
+func (s *Service) FindOrCreateByGitHubID(ctx context.Context, githubID string, username string, email string) (int64, error) {
+	return s.repo.FindOrCreateGithubID(ctx, githubID, username, email)
 }
 
 func NewService(repo *Repository) *Service {

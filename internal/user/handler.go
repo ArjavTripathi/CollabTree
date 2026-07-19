@@ -13,6 +13,7 @@ func (h *Handler) RegisterRoutes(mux *http.ServeMux) {
 	mux.HandleFunc("POST /users/create", h.CreateUser)
 	mux.HandleFunc("DELETE /users/{id}", h.DeleteUser)
 	mux.HandleFunc("PUT /users/{id}", h.UpdateProfile)
+
 }
 
 type Handler struct {
