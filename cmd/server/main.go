@@ -3,6 +3,7 @@ package main
 import (
 	"SocialMedia/internal/auth"
 	"SocialMedia/internal/db"
+	"SocialMedia/internal/middleware"
 	"SocialMedia/internal/user"
 	"context"
 	"log"
@@ -29,7 +30,8 @@ func main() {
 	mux := http.NewServeMux()
 	userHandler.RegisterRoutes(mux)
 	authHandler.RegisterRoutes(mux)
+	handler := middleware.Recover(middleware.Logging(mux))
 
-	log.Fatal(http.ListenAndServe(":8080", mux))
+	log.Fatal(http.ListenAndServe(":8080", handler))
 
 }
