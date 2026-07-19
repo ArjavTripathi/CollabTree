@@ -19,7 +19,7 @@ func (r *statusRecorder) WriteHeader(status int) {
 func Logging(next http.Handler) http.Handler {
 	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 		start := time.Now()
-		reqID, _ := r.Context().Value(requestIDKey).(string)
+		reqID := RequestIDFromContext(r.Context())
 		if reqID == "" {
 			reqID = "unknown"
 		}
@@ -27,6 +27,6 @@ func Logging(next http.Handler) http.Handler {
 
 		next.ServeHTTP(&rec, r)
 
-		log.Printf("[%s] %q %v %v (with id %s)\n ", r.Method, r.URL.Path, rec.status, time.Since(start), reqID)
+		log.Printf("[%s] %q;  STATUS: %v, RESPONSE TIME: %v (with id %s)\n ", r.Method, r.URL.Path, rec.status, time.Since(start), reqID)
 	})
 }
