@@ -14,7 +14,7 @@ type RequestTracker struct {
 func RateLimit(RateLimit map[string]RequestTracker, TimeLimit map[time.Time][]string) func(next http.Handler) http.Handler {
 	return func(next http.Handler) http.Handler {
 		return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
-			origin := r.Header.Get("Origin")
+			origin := r.RemoteAddr
 			if origin == "" || origin == "null" {
 				http.Error(w, http.StatusText(http.StatusForbidden), http.StatusForbidden)
 				return
