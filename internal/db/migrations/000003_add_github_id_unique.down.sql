@@ -1,0 +1,1 @@
+ALTER TABLE users DROP CONSTRAINT users_github_id_unique;

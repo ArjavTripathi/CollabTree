@@ -1,6 +1,7 @@
 package main
 
 import (
+	"SocialMedia/internal/auth"
 	"SocialMedia/internal/db"
 	"SocialMedia/internal/user"
 	"context"
@@ -21,8 +22,13 @@ func main() {
 	userService := user.NewService(userRepo)
 	userHandler := user.NewHandler(userService)
 
+	authRepo := auth.NewSessionRepository(pool)
+	authSvc := auth.NewService(os.Getenv("CLIENT_ID"), os.Getenv("CLIENT_SECRET"), authRepo, userService)
+	authHandler := auth.NewHandler(authSvc)
+
 	mux := http.NewServeMux()
 	userHandler.RegisterRoutes(mux)
+	authHandler.RegisterRoutes(mux)
 
 	log.Fatal(http.ListenAndServe(":8080", mux))
 

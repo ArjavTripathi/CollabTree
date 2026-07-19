@@ -11,7 +11,7 @@ type SessionRepository struct {
 }
 
 func NewSessionRepository(db *pgxpool.Pool) *SessionRepository {
-	return &SessionRepository{}
+	return &SessionRepository{db: db}
 }
 
 func (r *SessionRepository) Create(ctx context.Context, s Session) error {
