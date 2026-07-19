@@ -5,6 +5,7 @@ import (
 	"context"
 	"crypto/rand"
 	"encoding/hex"
+	"encoding/json"
 	"net/http"
 	"strconv"
 	"time"
@@ -55,12 +56,18 @@ func (h *Handler) devLogin(w http.ResponseWriter, r *http.Request) {
 	}
 
 	http.SetCookie(w, &http.Cookie{
-		Name:     "sessionId",
+		Name:     "X-Session-ID",
 		Value:    token,
 		HttpOnly: true,
 		Expires:  session.ExpiresAt,
 		Path:     "/",
 	})
+
+	err = json.NewEncoder(w).Encode(token)
+	if err != nil {
+		http.Error(w, "internal error", http.StatusInternalServerError)
+		return
+	}
 
 	w.WriteHeader(http.StatusNoContent)
 }
