@@ -1,18 +1,18 @@
 package user
 
 import (
+	"SocialMedia/internal/middleware"
 	"encoding/json"
 	"errors"
 	"fmt"
 	"net/http"
-	"strconv"
 )
 
-func (h *Handler) RegisterRoutes(mux *http.ServeMux) {
-	mux.HandleFunc("GET /users/{id}", h.GetProfile)
-	mux.HandleFunc("POST /users/create", h.CreateUser)
-	mux.HandleFunc("DELETE /users/{id}", h.DeleteUser)
-	mux.HandleFunc("PUT /users/{id}", h.UpdateProfile)
+func (h *Handler) RegisterRoutes(mux *http.ServeMux, authMW func(http.Handler) http.Handler) {
+	mux.Handle("GET /users/me", authMW(http.HandlerFunc(h.GetProfile)))
+	//mux.Handle("POST /users/create", authMW(http.HandlerFunc(h.CreateUser))) DEPRECATED due to new login handler
+	mux.Handle("DELETE /users/me", authMW(http.HandlerFunc(h.DeleteUser)))
+	mux.Handle("PUT /users/me", authMW(http.HandlerFunc(h.UpdateProfile)))
 
 }
 
@@ -32,13 +32,12 @@ func (h *Handler) UpdateProfile(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	id, err := strconv.ParseInt(r.PathValue("id"), 10, 64)
-	if err != nil {
-		http.Error(w, err.Error(), http.StatusBadRequest)
-		return
+	id, errId := middleware.GetUserIdFromContext(r.Context())
+	if errId != nil {
+		http.Error(w, error.Error(errId), http.StatusBadRequest)
 	}
 
-	err = h.service.UpdateProfile(r.Context(), &input, id)
+	err := h.service.UpdateProfile(r.Context(), &input, id)
 	if err != nil {
 		http.Error(w, err.Error(), http.StatusInternalServerError)
 		return
@@ -54,10 +53,9 @@ func (h *Handler) UpdateProfile(w http.ResponseWriter, r *http.Request) {
 }
 
 func (h *Handler) GetProfile(w http.ResponseWriter, r *http.Request) {
-	id, err := strconv.ParseInt(r.PathValue("id"), 10, 64)
-	if err != nil {
-		http.Error(w, err.Error(), http.StatusBadRequest)
-		return
+	id, errId := middleware.GetUserIdFromContext(r.Context())
+	if errId != nil {
+		http.Error(w, error.Error(errId), http.StatusBadRequest)
 	}
 
 	u, err := h.service.GetProfile(r.Context(), id)
@@ -102,12 +100,12 @@ func (h *Handler) CreateUser(w http.ResponseWriter, r *http.Request) {
 }
 
 func (h *Handler) DeleteUser(w http.ResponseWriter, r *http.Request) {
-	id, err := strconv.ParseInt(r.PathValue("id"), 10, 64)
-	if err != nil {
-		http.Error(w, err.Error(), http.StatusBadRequest)
+	id, errId := middleware.GetUserIdFromContext(r.Context())
+	if errId != nil {
+		http.Error(w, error.Error(errId), http.StatusBadRequest)
 	}
 
-	err = h.service.DeleteUser(r.Context(), id)
+	err := h.service.DeleteUser(r.Context(), id)
 	if errors.Is(err, ErrNotFound) {
 		http.Error(w, "user not found", http.StatusNotFound)
 	}

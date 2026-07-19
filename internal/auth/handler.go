@@ -40,7 +40,7 @@ func (h *Handler) callback(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 	http.SetCookie(w, &http.Cookie{
-		Name:     "session_id",
+		Name:     "X-Session-ID",
 		Value:    sess.ID,
 		HttpOnly: true,
 		Expires:  sess.ExpiresAt,
