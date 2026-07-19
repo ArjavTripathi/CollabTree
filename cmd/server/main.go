@@ -21,7 +21,7 @@ func main() {
 	defer pool.Close()
 
 	rateLimit := make(map[string]middleware.RequestTracker)
-	timeLimit := make(map[time.Time]string)
+	timeLimit := make(map[time.Time][]string)
 
 	userRepo := user.NewRepository(pool)
 	userService := user.NewService(userRepo)
