@@ -13,7 +13,7 @@ const requestIDKey contextKeyRequestid = "requestID"
 
 func RequestId(next http.Handler) http.Handler {
 	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
-		const charset = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789"
+		const charset = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789$%*!@?|/"
 		seed := rand.NewSource(time.Now().UnixNano())
 		n := rand.New(seed)
 
