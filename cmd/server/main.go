@@ -3,6 +3,7 @@ package main
 import (
 	"SocialMedia/internal/auth"
 	"SocialMedia/internal/db"
+	"SocialMedia/internal/devtools"
 	"SocialMedia/internal/middleware"
 	"SocialMedia/internal/user"
 	"context"
@@ -35,9 +36,16 @@ func main() {
 	authorizeRequest := middleware.NewAuthMiddleware(authSessionStore)
 
 	CORSrequest := middleware.CORS(os.Getenv("FRONTEND_ORIGIN"))
+
 	RateLimit := middleware.RateLimit(rateLimit, timeLimit)
 
 	mux := http.NewServeMux()
+
+	if os.Getenv("ENV") == "DEV" {
+		devHandler := devtools.NewHandler(authRepo)
+		devHandler.RegisterRoutes(mux)
+	}
+
 	userHandler.RegisterRoutes(mux, authorizeRequest)
 	authHandler.RegisterRoutes(mux)
 	handler := middleware.Recover(middleware.Logging(middleware.RequestId(CORSrequest(RateLimit(mux)))))
