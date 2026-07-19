@@ -48,7 +48,7 @@ func main() {
 
 	userHandler.RegisterRoutes(mux, authorizeRequest)
 	authHandler.RegisterRoutes(mux)
-	handler := middleware.Recover(middleware.Logging(middleware.RequestId(CORSrequest(RateLimit(mux)))))
+	handler := middleware.Recover(middleware.RequestId(middleware.Logging(CORSrequest(RateLimit(mux)))))
 
 	log.Fatal(http.ListenAndServe(":8080", handler))
 
