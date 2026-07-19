@@ -18,7 +18,7 @@ type SessionsStore interface {
 func NewAuthMiddleware(sessions SessionsStore) func(http.Handler) http.Handler {
 	return func(next http.Handler) http.Handler {
 		return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
-			sessionId, err := r.Cookie("sessionId")
+			sessionId, err := r.Cookie("X-Session-ID")
 			if err != nil {
 				http.Error(w, http.StatusText(http.StatusUnauthorized), http.StatusUnauthorized)
 				return
